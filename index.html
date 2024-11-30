@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EasyOder</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+
+    .popup-overlay {
+        display: none; /* เริ่มต้นให้ซ่อนไว้ */
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 50;
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+    }
+    .popup-overlay.active {
+        opacity: 1;
+        visibility: visible;
+        /*display: block;*/
+    }
+
+    .popup-content {
+        background: white;
+        max-width: 90%;
+        max-height: 90%;
+        width: 1000px;
+        margin: 2rem auto;
+        border-radius: 0.5rem;
+        position: relative;
+        padding: 1rem;
+   }
+
+    .close-btn {
+        position: absolute;
+        right: 1rem;
+        top: 1rem;
+        font-size: 1.5rem;
+        cursor: pointer;
+        background: #dc2626;
+        color: white;
+        width: 2rem;
+        height: 2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 9999px;
+   }
+        /*----------*/
+    /* Hidden by default */
+    #video-popup {
+      display: none;
+    }
+    /* Popup style */
+    .popup-content {
+      position: relative;
+      background-color: white;
+      max-width: 1000px;
+      margin: auto;
+      padding: 20px;
+      border-radius: 10px;
+      animation: popupFadeIn 0.3s ease;
+    }
+
+    @keyframes popupFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+    /* Overlay background */
+    .popup-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+    /* Close button */
+    .close-btn {
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      background-color: red;
+      color: white;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 18px;
+      cursor: pointer;
+    }
+    
+  </style>
+</head>
+<body class="bg-white">
+
+  <!-- Header -->
+  <header class="bg-red-600 text-white py-4 px-6 flex justify-between items-center border-b bordwe-white ">
+    <div class="text-3xl font-bold">Easy Oder</div>
+    <nav class="flex space-x-4">
+      <!-- <a href="#features" class="hover:text-red-200">คุณสมบัติ</a>
+      <a href="#how-it-works" class="hover:text-red-200">วิธีใช้งาน</a>
+      <button class="bg-white text-red-600 px-4 py-2 rounded-full">เข้าสู่ระบบ</button> -->
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="text-center bg-gradient-to-b from-red-600 to-red-400 text-white py-16 px-4">
+    <h1 class="text-4xl font-bold mb-4">จัดการร้านอาหารง่ายๆ ด้วย Easy Oder</h1>
+    <div class="box">
+    <p class="text-lg my-8 md:px-24">การใช้ระบบสั่งอาหารผ่าน QR Code ช่วยเพิ่มความสะดวก รวดเร็ว ของลูกค้าในการสั่งอาหารผ่านอุปกรณ์มือถือของตนเอง 
+      ส่งผลให้การสั่งอาหารมีประสิทธิภาพ ลดความผิดพลาดที่เกิดขึ้น พร้อมทั้งช่วยให้ร้านของท่านไม่เพียงแค่บริการดีขึ้น 
+      แต่ยังแสดงถึงความทันสมัยและความใส่ใจในความสะดวกสบายของลูกค้า</p>
+  </div>
+    <div class="flex justify-center space-x-4">
+      <!-- <button class="bg-white text-red-600 px-6 py-3 rounded-full">เริ่มใช้งานฟรี</button> -->
+            <!-- เพิ่มปุ่มทดลองใช้งานในส่วน Hero -->
+            <div class="flex justify-center space-x-4 mt-8">
+              <button onclick="showOrderDemo()" class="bg-white text-red-600 px-8 py-3 rounded-full font-semibold hover:bg-red-50 transition-colors flex items-center">
+                  <i data-lucide="play-circle" class="w-5 h-5 mr-2"></i>
+                  ทดลองใช้งาน
+              </button>
+          </div>
+      
+    </div>
+  </section>
+
+  <!-- Video Popup -->
+  <div id="video-popup" class="popup-overlay">
+    <div class="popup-content relative">
+      <span class="close-btn" onclick="closeVideo()">&times;</span>
+      <!-- Embed YouTube video -->
+      <iframe width="900" height="400" src="EDBC42C5-3CF4-44CB-B5B6-EBDA9CDA8356.mp4" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    </div>
+  </div>
+
+
+  <!-- Features Section -->
+  <section id="features" class="py-16 px-6 bg-gray-50">
+    <div class="max-w-6xl mx-auto">
+      <h2 class="text-3xl font-bold text-center mb-12">ใช้ QR แล้วดีอย่างไร</h2>
+      <div class="grid md:grid-cols-3 gap-8">
+
+        <!-- Feature 3: QR Order -->
+        <div class="bg-white p-6 rounded-lg shadow-md text-center">
+          <i class="fas fa-qrcode text-red-600 text-6xl mb-4"></i>
+          <img class="w-50 h-50" src="aHR0cHM6Ly9zLmlzYW5vb2suY29tL2hpLzAvdWQvMzA2LzE1MzExNzcvaXN0b2NrLTExOTI4NDY5MjAuanBn.jpg" alt="">
+          <h3 class="text-xl font-semibold my-4">1. สั่งอาหารง่ายๆเพียงสแกนผ่าน QR Code</h3>
+          <div class="text-left">
+          <p class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 " viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+          </svg>นำเสนอเมนูอาหารออนไลน์ง่าย ๆ เพียงไม่กี่คลิก</p>
+          <p class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 " viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+          </svg>จัดการโต๊ะ และ พิมพ์ QR Code ที่ออกแบบติดไว้ที่โต๊ะได้เลย</p>
+          <p class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4  mr-2" viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+          </svg>QR Code รองรับการใช้งานได้ทุกอุปกรณ์</p>
+          
+        </div>
+        </div>
+
+        <!-- Feature 1: Order Management -->
+        <div class="bg-white p-6 rounded-lg shadow-md text-center">
+          <i class="fas fa-shopping-cart text-red-600 text-6xl mb-4  "></i>
+          <img class="w-50 h-50 rounded-xl" src="pngtree-a-woman-chef-checking-the-order-list-in-the-kitchen-photo-image_29743638.jpg" alt="">
+          <h3 class="text-xl font-semibold my-4">2. จัดการออเดอร์ตามรายการที่สั่งได้เลย</h3>
+          <div class="text-left">
+          <p class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 " viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+          </svg>รับและจัดการออเดอร์ได้ง่ายดาย พร้อมการแจ้งเตือนแบบเรียลไทม์</p>
+          <p class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 " viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+          </svg>จัดลำดับการทำอาหาร ตามรายการที่ได้รับแจ้ง</p>
+          <p class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 " viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
+            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+          </svg>ติดตามสถานะอาหาร และทำให้สื่อสารกับพนักงานครัวได้อย่างรวดเร็ว</p>
+          </div>
+        </div>
+
+        <!-- Feature 2: Kitchen Management -->
+        <div class="bg-white p-6 rounded-lg shadow-md text-left">
+          <i class="fas fa-chef text-red-600 text-6xl mb-4"></i>
+          <img class="w-50 h-50 rounded-xl" src="istockphoto-74410028-612x612.jpg" alt="">
+          <h3 class="text-xl font-semibold my-4">3. เมื่อออเดอร์พร้อมแล้ว จัดเสิร์ฟตามโต๊ะที่สั่งได้ทันที</h3>
+          
+
+          <div class="text-left">
+            <p class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 " viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>พนักงานสามารถเสิร์ฟที่โต๊ะอาหารได้เลยเมื่อเมนูนั้นเสร็จสิ้น</p>
+            <p class="flex items-center"><svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-2 " viewBox="0 0 20 20" fill="currentColor" stroke="currentColor" stroke-width="1">
+              <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+            </svg>ลูกค้าสามารถสั่งเพิ่มเมนูได้สะดวก รวดเร็ว และทันที</p>
+            </div>
+        </div>
+
+        
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <!-- <section id="how-it-works" class="py-16 px-6 bg-white "> -->
+    <div class="max-w-6xl mx-auto py-16 px-6 border-t border-black">
+      <h2 class="text-3xl font-bold text-center mb-12">ขั้นตอนการใช้งาน</h2>
+      <div class="grid md:grid-row-3 gap-8">
+
+        <!-- Step 1 -->
+        <div class="text-left w-full rounded-lg shadow-md p-8 flex">
+          <div class="w-4/5 ">
+          <i class="fas fa-mobile-alt text-red-600 text-6xl mb-4"></i>
+            
+          <h2 class="text-2xl font-bold mb-2">ขั้นตอนที่ 1 เปิดโต๊ะเพื่อสั่งออเดอร์</h2>
+          <!-- <h3 class="text-xl font-semibold mb-4">ลงทะเบียนร้าน</h3> -->
+          <p>เปิดโต๊ะผ่านทางระบบ เพื่อพิมพ์ใบ QR Code แล้วนำมาให้ลูกค้าสำหรับการสั่งออเดอร์ของลูกค้า</p>
+        </div>
+          <div class="w-1/3 flex justify-center items-center mx-auto">
+          <img class="h-50 w-50 md:w-40 md:h-40 rounded-xl " src="napkin-selection (1).png" alt="">
+        </div>
+        
+        </div>
+
+        <!-- Step 2 -->
+        <div class=" w-full rounded-lg shadow-md p-8">
+          <i class="fas fa-clipboard text-red-600 text-6xl mb-4"></i>
+          <div class="justify-between flex">
+          <div class="w-1/3 flex justify-center items-center mx-auto ">
+            <img class="h-50 w-50 md:w-40 md:h-40 rounded-xl " src="napkin-selection (2).png" alt="">
+          </div>
+          <div class="w-4/5">
+          <h2 class="text-2xl font-bold mb-2 ">ขั้นตอนที่ 2 ลูกค้าเลือกเมนูและยืนยันออเดอร์</h2>
+          <!-- <h3 class="text-xl font-semibold mb-4">จัดการออเดอร์</h3> -->
+          <p>ลูกค้าสามารถจัดการออเดอร์ของตัวเองตามความชอบได้อย่างเต็มที่ เมื่อพอใจลูกค้าต้องกดยืนยันในการสั่งออเดอร์ ออเดอร์ที่ถูกสั่งจะถูกส่งไปยังครัวเพื่อรอการปรุงจากพ่อครัว</p>
+        </div>
+        </div>
+        </div>
+
+        <!-- Step 3 -->
+        <div class="text-left w-full rounded-lg shadow-md p-8 flex">
+          <div class="w-4/5">
+          <i class="fas fa-mobile-alt text-red-600 text-6xl mb-4"></i>
+
+          <h2 class="text-2xl font-bold mb-2">ขั้นตอนที่ 3 ปรุงแล้วเตรึยมจัดเสิร์ฟ</h2>
+          <!-- <h3 class="text-xl font-semibold mb-4">ลงทะเบียนร้าน</h3> -->
+          <p>เมื่อออเดอร์ของลูกค้าถูกส่งเข้ามาในครัว พ่อครัวจะเห็นออเดอร์จากโต๊ะต่าง ๆ แต่ออเดอร์จะถูกเรียงตามลำดับการสั่งโดยออเดอร์ที่เข้ามาก่อนจะอยู่ข้างบน 
+            เมื่อพ่อครัวจะเริ่มปรุงต้องยืนยันการดำเนินการในระบบ เมื่อปรุงเมนูอาหารในออเดอร์เสร็จจะด้องยืนยันการปรุงเสร็จสิ้น เพื่อแจ้งสถานะ 'ปรุงเสร็จสิ้น' 
+            ของเมนูนั้นแก่พนักงานเสิร์ฟ</p>
+          </div>
+            <div class="w-1/3 flex justify-center items-center mx-auto">
+              <img class="h-20 w-20 md:w-40 md:h-40 rounded-xl " src="napkin-selection (3).png" alt="">
+            </div>
+        
+        </div>
+
+        <!-- Step 4 -->
+        <div class=" w-full rounded-lg shadow-md p-8">
+          <i class="fas fa-clipboard text-red-600 text-6xl mb-4"></i>
+          <div class="justify-between flex">
+          
+            <div class="w-1/3 flex justify-center items-center mx-auto ">
+              <img class="h-50 w-50 md:w-40 md:h-40 rounded-xl " src="napkin-selection (4).png" alt="">
+            </div>
+          
+          <div class="w-4/5">
+          <h2 class="text-2xl font-bold mb-2 ">ขั้นตอนที่ 4 จัดเสิร์ฟแก่ลูกค้า</h2>
+          <!-- <h3 class="text-xl font-semibold mb-4">จัดการออเดอร์</h3> -->
+          <p>พนักงานเสิร์ฟจะได้รับรายการเสิร์ฟของเมนูที่มีสถานะ 'ปรุงเสร็จสิ้น' เพื่อนำออเดอร์ไปเสิร์ฟแก่ลูกค้าที่โต๊ะตามในรายการ 
+            เมื่อเสิร์ฟเสร็จสิ้นพนักงานเสิร์ฟจะยืนยันการเสิร์ฟในระบบ</p>
+        </div>
+        </div>
+        </div>
+
+        <!-- Step 5 -->
+        <div class="text-left w-full rounded-lg shadow-md p-8 flex">
+          <div class="w-4/5">
+          <i class="fas fa-mobile-alt text-red-600 text-6xl mb-4"></i>
+
+          <h2 class="text-2xl font-bold mb-2">ขั้นตอนที่ 5 เช็คบิลและปิดโต๊ะ</h2>
+          <!-- <h3 class="text-xl font-semibold mb-4">ลงทะเบียนร้าน</h3> -->
+          <p>เมื่อลูกรับประทานอาหารเสร็จ พร้อมที่จะเช็คบิลสามารถดูยอดค่าใช้จ่ายภายในโต๊ะที่เปิดให้แก่ลูกค้าในตอนแรก 
+            เมื่อลูกค้าชำระค่าอาหารเรียบร้อยสามารถปิดโต๊ะ เพื่อปิดการสั่งอาหารทาง QR Code ของโต๊ะนั้น</p>
+        </div>
+        <div class="w-1/3 flex justify-center items-center mx-auto">
+          <img class="h-50 w-50 md:w-40 md:h-40 rounded-xl " src="napkin-selection (5).png" alt="">
+        </div>
+        </div>
+
+      </div>
+    </div>
+  <!-- </section> -->
+
+  <!-- Call to Action -->
+  <section class="bg-red-600 text-white py-16 text-center">
+    <h2 class="text-3xl font-bold mb-6">ทำไมถึงควรใช้ระบบสั่งอาหารทาง QR Code</h2>
+    <p class="text-l mb-5 ">การสั่งเมนูผ่าน QR Code มีข้อดีหลายประการที่สามารถช่วยเพิ่มประสิทธิภาพในการดำเนินธุรกิจและยกระดับประสบการณ์ลูกค้า ดังนี้</p>
+    <div class="flex justify-center">
+    <div class="w-4/5 pl-8 md:w-3/5"> 
+      <ul class="space-y-1 text-l text-left text-white list-disc  ">
+        <li>
+          ลูกค้าสามารถสั่งอาหารได้ทันทีโดยการสแกน QR Code ผ่านสมาร์ทโฟน ลดการรอคิวหรือการรอพนักงานนำเมนูมาเสิร์ฟ
+        </li>
+        <li>
+          ลดการสัมผัสสิ่งของร่วมกัน ซึ่งช่วยป้องกันการแพร่กระจายของเชื้อโรค และทำให้ลูกค้ารู้สึกปลอดภัย 
+        </li>
+        
+        <li>
+          ลูกค้าสามารถเลือกเมนูและตรวจสอบคำสั่งซื้อได้ด้วยตัวเอง ลดโอกาสที่พนักงานจะทำผิดพลาดในการบันทึกออเดอร์
+        </li>
+        <li>
+          การใช้ QR Code ทำให้ระบบการสั่งอาหารเป็นอัตโนมัติ ลดภาระงานของพนักงานและทำให้การบริการรวดเร็วขึ้น
+        </li>
+        <li>
+          ร้านอาหารไม่จำเป็นต้องพิมพ์เมนูกระดาษหรือเปลี่ยนแผ่นเมนูบ่อย ๆ ระบบออนไลน์ที่ใช้งานผ่าน QR Code ช่วยประหยัดค่าใช้จ่ายในส่วนนี้
+        </li>
+        <li>
+          ลูกค้าสามารถดูเมนูได้อย่างสะดวกสบายจากสมาร์ทโฟนของตนเอง พร้อมทั้งมีข้อมูลที่อัพเดตอยู่เสมอ
+        </li>
+    </ul>
+</div>
+    <!-- <button class="bg-white text-red-600 px-8 py-4 rounded-full text-xl">เริ่มใช้งานฟรี</button> -->
+  </section>
+
+    <!-- Order Demo Popup -->
+    <div id="order-demo" class="popup-overlay">
+        <div class="popup-content">
+            <span class="close-btn" onclick="closeOrderDemo()">×</span>
+            
+            <!-- Customer View -->
+            <div id="customer-view" class="customer-view">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold">สั่งอาหาร - โต๊ะ 15</h2>
+                    <div class="bg-red-100 text-red-600 px-4 py-2 rounded-full">
+                        <span id="cart-total">0 บาท</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="md:col-span-2">
+                      <div class="grid sm:grid-cols-2 gap-4 max-h-[60vh] overflow-y-auto pr-4" id="menu-list">
+                            <!-- Menu items will be inserted here -->
+                        </div>
+                    </div>
+                    <div id="cart-container">
+                        <!-- Cart will be inserted here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Kitchen View -->
+            <div id="kitchen-view" class="hidden">
+                <div class="flex items-center mb-6">
+                    <i data-lucide="chef-hat" class="w-8 h-8 text-red-600 mr-3"></i>
+                    <h2 class="text-2xl font-bold">ครัว - รายการที่ต้องเตรียม</h2>
+                </div>
+                <div id="kitchen-orders" class="space-y-4">
+                    <!-- Kitchen orders will be inserted here -->
+                </div>
+            </div>
+
+            <!-- Waiter View -->
+            <div id="waiter-view" class="hidden">
+                <div class="flex items-center mb-6">
+                    <i data-lucide="utensils" class="w-8 h-8 text-red-600 mr-3"></i>
+                    <h2 class="text-2xl font-bold">พนักงานเสิร์ฟ - รายการที่ต้องเสิร์ฟ</h2>
+                </div>
+                <div id="waiter-orders" class="space-y-4">
+                    <!-- Waiter orders will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+  <!-- Footer -->
+  <footer class="bg-gray-900 text-white py-8 px-6">
+    <div class="max-w-6xl mx-auto flex justify-between items-center">
+      <div class="text-xl font-bold">Easy Oder</div>
+      <div class="space-x-4">
+        <!-- <a href="#" class="hover:text-red-400">เกี่ยวกับเรา</a>
+        <a href="#" class="hover:text-red-400">ติดต่อ</a>
+        <a href="#" class="hover:text-red-400">นโยบายความเป็นส่วนตัว</a> -->
+      </div>
+    </div>
+  </footer>
+
+  <!-- Font Awesome Script -->
+  <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+  <script src="script.js"></script>
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    const menuItems = [
+    { 
+        id: 1, 
+        name: "ลิ้นวัวไทยวากิว", 
+        description: "ลิ้นวัวไทยวากิวสไลด์ 250 กรัม",
+        price: 269,
+        image: "/Users/lubpui/Downloads/prensent/prensent/beef_tongue_sliced_250g_copy.webp"
+    },
+    { 
+        id: 2, 
+        name: "เสือร้องไห้ วากิวออสเตรเลีย", 
+        description: "เสือร้องไห้ วากิวออสเตรเลีย 250 กรัม",
+        price: 349,
+        image: "/Users/lubpui/Downloads/prensent/prensent/98852cddcd274e3db246fe0a03d9cfec.jpg"
+    },
+    { 
+        id: 3, 
+        name: "เนื้อคารุบิ", 
+        description: "เนื้อคารุบิ 300 กรัม",
+        price: 120,
+        image: "/Users/lubpui/Downloads/prensent/prensent/karubi_super_300.png"
+    },
+    {
+        id: 4,
+        name: "พิคานย่า",
+        description: "เนื้อพิคานย่าสเต๊ก 350 กรัม",
+        price: 65,
+        image: "/Users/lubpui/Downloads/prensent/prensent/picanha_steak_200_g._-_premium.png"
+    }
+];
+
+    let cart = [];
+    let currentOrder = null;
+
+    function showOrderDemo() {
+      const popup = document.getElementById('order-demo');
+        popup.classList.add('active');
+        document.body.style.overflow = 'hidden';
+        renderMenu();
+        renderCart();
+    }
+
+    function closeOrderDemo() {
+      const popup = document.getElementById('order-demo');
+        popup.classList.remove('active');
+        document.body.style.overflow = '';
+    }
+
+function renderMenu() {
+    const menuList = document.getElementById('menu-list');
+    menuList.innerHTML = menuItems.map(item => `
+        <div class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow">
+            <div class="aspect-w-16 aspect-h-9 relative">
+                <img 
+                    src="${item.image}" 
+                    alt="${item.name}"
+                    class="w-full h-48 object-cover"
+                    onerror="this.src='/api/placeholder/400/300'"
+                />
+            </div>
+            <div class="p-4">
+                <div class="mb-4">
+                    <h3 class="text-lg font-semibold mb-1">${item.name}</h3>
+                    <p class="text-gray-600 text-sm h-12 overflow-hidden">${item.description}</p>
+                </div>
+                <div class="flex justify-between items-center mt-auto">
+                    <div class="text-lg font-bold text-red-600">${item.price} บาท</div>
+                    <button 
+                        onclick="addToCart(${item.id})" 
+                        class="bg-red-600 text-white px-4 py-2 rounded-full hover:bg-red-700 transition-colors flex items-center gap-2"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                        เพิ่ม
+                    </button>
+                </div>
+            </div>
+        </div>
+    `).join('');
+}
+
+    function renderCart() {
+        const cartContainer = document.getElementById('cart-container');
+        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
+        document.getElementById('cart-total').textContent = `${total} บาท`;
+        
+        cartContainer.innerHTML = `
+            <div class="bg-white p-4 rounded-lg shadow">
+                <h3 class="text-xl font-bold mb-4">รายการอาหารที่สั่ง</h3>
+                ${cart.length === 0 ? '<p class="text-gray-500 text-center">ยังไม่มีรายการอาหาร</p>' : 
+                    `<div class="space-y-4 mb-4">
+                        ${cart.map((item, index) => `
+                            <div class="flex justify-between items-center border-b pb-2">
+                                <div>
+                                    <div>${item.name}</div>
+                                    <div class="text-sm text-gray-500">${item.price} บาท × ${item.quantity}</div>
+                                </div>
+                                <div class="flex items-center space-x-2">
+                                    <button onclick="updateQuantity(${index}, ${item.quantity - 1})" class="bg-gray-100 px-2 py-1 rounded">-</button>
+                                    <span>${item.quantity}</span>
+                                    <button onclick="updateQuantity(${index}, ${item.quantity + 1})" class="bg-gray-100 px-2 py-1 rounded">+</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                        <div class="flex justify-between font-bold mt-4">
+                            <span>รวมทั้งหมด</span>
+                            <span>${total} บาท</span>
+                        </div>
+                        <button onclick="submitOrder()" class="w-full bg-red-600 text-white py-2 rounded-lg mt-4 hover:bg-red-700">
+                            สั่งอาหาร
+                        </button>
+                    </div>`
+                }
+            </div>
+        `;
+    }
+
+    function addToCart(itemId) {
+        const item = menuItems.find(i => i.id === itemId);
+        const existing = cart.find(i => i.id === itemId);
+        
+        if (existing) {
+            existing.quantity += 1;
+        } else {
+            cart.push({ ...item, quantity: 1 });
+        }
+        
+        renderCart();
+    }
+
+    function updateQuantity(index, newQuantity) {
+        if (newQuantity > 0) {
+            cart[index].quantity = newQuantity;
+        } else {
+            cart.splice(index, 1);
+        }
+        renderCart();
+    }
+
+    function submitOrder() {
+        if (cart.length === 0) return;
+        
+        currentOrder = {
+            id: Date.now(),
+            table: 15,
+            items: [...cart],
+            status: 'pending',
+            time: new Date().toLocaleTimeString()
+        };
+        
+        // Switch to kitchen view
+        document.getElementById('customer-view').classList.add('hidden');
+        document.getElementById('kitchen-view').classList.remove('hidden');
+        renderKitchenView();
+        
+        // Reset cart
+        cart = [];
+    }
+
+    function renderKitchenView() {
+        const kitchenOrders = document.getElementById('kitchen-orders');
+        kitchenOrders.innerHTML = `
+            <div class="bg-white p-6 rounded-lg shadow">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <span class="font-bold">โต๊ะ ${currentOrder.table}</span>
+                        <span class="text-gray-500 ml-4">${currentOrder.time}</span>
+                    </div>
+                    <button onclick="prepareOrder()" class="bg-red-600 text-white px-4 py-2 rounded-lg">
+                        เตรียมอาหารเสร็จแล้ว
+                    </button>
+                </div>
+                <div class="space-y-2">
+                    ${currentOrder.items.map(item => `
+                        <div class="flex justify-between items-center">
+                            <span>${item.name}</span>
+                            <span class="text-gray-600">×${item.quantity}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    function prepareOrder() {
+        // Switch to waiter view
+        document.getElementById('kitchen-view').classList.add('hidden');
+        document.getElementById('waiter-view').classList.remove('hidden');
+        currentOrder.status = 'ready';
+        renderWaiterView();
+    }
+
+    function renderWaiterView() {
+        const waiterOrders = document.getElementById('waiter-orders');
+        waiterOrders.innerHTML = `
+            <div class="bg-white p-6 rounded-lg shadow">
+                <div class="flex justify-between items-center mb-4">
+                    <div>
+                        <span class="font-bold">โต๊ะ ${currentOrder.table}</span>
+                        <span class="text-gray-500 ml-4">${currentOrder.time}</span>
+                    </div>
+                    <div class="flex items-center">
+                        <span class="bg-green-100 text-green-600 px-3 py-1 rounded-full mr-4">
+                            พร้อมเสิร์ฟ
+                        </span>
+                        <button onclick="serveOrder()" class="bg-red-600 text-white px-4 py-2 rounded-lg">
+                            เสิร์ฟเรียบร้อย
+                        </button>
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    ${currentOrder.items.map(item => `
+                        <div class="flex justify-between items-center">
+                            <span>${item.name}</span>
+                            <span class="text-gray-600">×${item.quantity}</span>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+
+    function serveOrder() {
+        // Reset demo
+        currentOrder = null;
+        document.getElementById('waiter-view').classList.add('hidden');
+        document.getElementById('customer-view').classList.remove('hidden');
+        renderCart();
+    }
+</script>
+</body>
+</html>
